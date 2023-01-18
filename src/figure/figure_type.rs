@@ -9,6 +9,7 @@ const I_COLOR: Color = Color {
     green: 237.0 / 255.0,
     blue: 238.0 / 255.0,
     alpha: 1.0,
+    name: "I",
 };
 
 const J_COLOR: Color = Color {
@@ -16,6 +17,7 @@ const J_COLOR: Color = Color {
     green: 33.0 / 255.0,
     blue: 230.0 / 255.0,
     alpha: 1.0,
+    name: "J",
 };
 
 const L_COLOR: Color = Color {
@@ -23,6 +25,7 @@ const L_COLOR: Color = Color {
     green: 162.0 / 255.0,
     blue: 67.0 / 255.0,
     alpha: 1.0,
+    name: "L",
 };
 
 const O_COLOR: Color = Color {
@@ -30,6 +33,7 @@ const O_COLOR: Color = Color {
     green: 238.0 / 255.0,
     blue: 79.0 / 255.0,
     alpha: 1.0,
+    name: "O",
 };
 
 const Z_COLOR: Color = Color {
@@ -37,6 +41,7 @@ const Z_COLOR: Color = Color {
     green: 235.0 / 255.0,
     blue: 71.0 / 255.0,
     alpha: 1.0,
+    name: "Z",
 };
 
 const T_COLOR: Color = Color {
@@ -44,6 +49,7 @@ const T_COLOR: Color = Color {
     green: 45.0 / 255.0,
     blue: 231.0 / 255.0,
     alpha: 1.0,
+    name: "T",
 };
 
 const S_COLOR: Color = Color {
@@ -51,6 +57,7 @@ const S_COLOR: Color = Color {
     green: 47.0 / 255.0,
     blue: 23.0 / 255.0,
     alpha: 1.0,
+    name: "S",
 };
 
 #[derive(Debug, Clone, PartialEq)]
