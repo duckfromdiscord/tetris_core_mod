@@ -1,12 +1,12 @@
 [package]
 name = "tetris_core_mod"
-version = "0.2.1"
-authors = ["etoledom <etoledom@icloud.com>"]
+version = "0.3.0"
+authors = ["etoledom <etoledom@icloud.com>", "duckfromdiscord <@duck>"]
 edition = "2018"
 description = "Simple Tetris game model with no UI or Game engine"
-repository = "https://github.com/etoledom/tetris_core"
-homepage = "https://github.com/etoledom/tetris_core"
-documentation = "https://github.com/etoledom/tetris_core"
+repository = "https://github.com/duckfromdiscord/tetris_core_mod"
+homepage = "https://github.com/duckfromdiscord/tetris_core_mod"
+documentation = "https://github.com/duckfromdiscord/tetris_core_mod"
 readme = "README.md"
 keywords = ["tetris", "game"]
 categories = ["games"]
