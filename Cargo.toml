@@ -1,5 +1,5 @@
 [package]
-name = "tetris_core"
+name = "tetris_core_mod"
 version = "0.2.1"
 authors = ["etoledom <etoledom@icloud.com>"]
 edition = "2018"
