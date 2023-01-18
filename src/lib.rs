@@ -1,12 +1,12 @@
 mod active_figure;
 mod board;
-mod figure;
+pub mod figure;
 mod game;
 mod move_validator;
 
 use active_figure::ActiveFigure;
 use board::Board;
-use figure::{block, geometry, graphics, Figure, FigureType, Matrix};
+pub use figure::{block, geometry, graphics, Figure, FigureType, Matrix};
 use geometry::Point;
 use graphics::Color;
 

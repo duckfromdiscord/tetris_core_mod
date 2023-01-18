@@ -235,6 +235,10 @@ impl Game {
     pub fn get_score(&self) -> u64 {
         return self.score;
     }
+
+    pub fn get_lines_completed(&self) -> u64 {
+        return self.lines_completed().len() as u64;
+    }
 }
 
 #[cfg(test)]
