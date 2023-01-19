@@ -4,5 +4,5 @@ pub struct Color {
     pub green: f32,
     pub blue: f32,
     pub alpha: f32,
-    pub name: &'static str,
+    pub name: &'static str, //char,
 }
