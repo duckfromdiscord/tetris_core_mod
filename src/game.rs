@@ -28,6 +28,7 @@ pub struct Game {
     waiting_time: f64,
     randomizer: Box<dyn Randomizer + 'static>,
     state: GameState,
+    lines: usize
 }
 
 impl Game {
@@ -45,6 +46,7 @@ impl Game {
             waiting_time: 0.0,
             randomizer,
             state: GameState::Playing,
+            lines: 0,
         };
     }
 
@@ -200,6 +202,7 @@ impl Game {
     fn remove_completed_lines(&mut self) -> usize {
         let lines = self.lines_completed();
         self.board = self.board.removing_lines(&lines);
+        self.lines += lines.len();
         return lines.len();
     }
 
@@ -236,8 +239,8 @@ impl Game {
         return self.score;
     }
 
-    pub fn get_lines_completed(&self) -> u64 {
-        return self.lines_completed().len() as u64;
+    pub fn get_lines_completed(&self) -> usize {
+        return self.lines;
     }
 }
 
