@@ -1,7 +1,7 @@
 use super::move_validator::{can_move_down, has_valid_position};
 use super::{ActiveFigure, Block, Board, FigureType, Point, Size};
 
-const MOVING_PERIOD: f64 = 0.2; //secs
+const MOVING_PERIOD: f64 = 1f64; //secs
 
 pub enum Action {
     MoveDown,
@@ -11,7 +11,7 @@ pub enum Action {
 }
 
 pub trait Randomizer {
-    fn random_between(&self, first: i32, last: i32) -> i32;
+    fn random(&self) -> i32;
 }
 
 #[derive(PartialEq)]
@@ -56,7 +56,7 @@ impl Game {
     }
 
     fn random_figure(position: Point, randomizer: &Box<dyn Randomizer + 'static>) -> ActiveFigure {
-        let figure = match randomizer.random_between(0, 6) {
+        let figure = match randomizer.random() {
             0 => FigureType::I,
             1 => FigureType::J,
             2 => FigureType::L,
@@ -241,216 +241,5 @@ impl Game {
 
     pub fn get_lines_completed(&self) -> usize {
         return self.lines;
-    }
-}
-
-#[cfg(test)]
-mod game_tests {
-    use super::*;
-
-    struct Random {
-        number: i32,
-    }
-
-    impl Randomizer for Random {
-        fn random_between(&self, _first: i32, _last: i32) -> i32 {
-            return self.number;
-        }
-    }
-
-    #[test]
-    fn test_active_figure_is_draw() {
-        let game = get_game();
-        let active_points = game.active.to_cartesian();
-        let drawed_points = draw_to_cartesian(game.draw());
-
-        assert_eq!(drawed_points, active_points);
-    }
-    #[test]
-    fn test_active_figure_moves_down() {
-        let mut game = get_game();
-        let first_position = game.active.to_cartesian();
-        let expected: Vec<Point> = first_position
-            .iter()
-            .map(|point| Point {
-                x: point.x,
-                y: point.y + 1,
-            })
-            .collect();
-        game.perform(Action::MoveDown);
-        let drawed_points = draw_to_cartesian(game.draw());
-
-        assert_eq!(drawed_points, expected);
-    }
-    #[test]
-    fn test_active_figure_does_not_move_lower_than_floor() {
-        let mut game = get_game();
-        let y = game.board.height() as i32 - 3; // 3 spaces before the floor
-        game.active = ActiveFigure::new(FigureType::O, Point { x: 10, y });
-        game.perform(Action::MoveDown);
-        game.perform(Action::MoveDown);
-        game.perform(Action::MoveDown);
-        assert_eq!(game.active.bottom_edge(), 39);
-        game.perform(Action::MoveDown);
-        assert_eq!(game.active.bottom_edge(), 39);
-    }
-    #[test]
-    fn test_rotate_active_figure() {
-        let mut game = get_game();
-        let rotated = game.active.rotated();
-        game.perform(Action::Rotate);
-        let drawed_points = draw_to_cartesian(game.draw());
-        assert_eq!(drawed_points, rotated.to_cartesian());
-    }
-
-    #[test]
-    fn test_move_left() {
-        let mut game = get_game();
-        game.active = ActiveFigure::new(FigureType::L, Point { x: 10, y: 0 });
-        assert_eq!(game.active.left_edge(), 10);
-        game.perform(Action::MoveLeft);
-        assert_eq!(game.active.left_edge(), 9);
-    }
-    #[test]
-    fn test_move_left_does_not_go_beyond_zero() {
-        let mut game = get_game();
-        game.active = ActiveFigure::new(FigureType::L, Point { x: 2, y: 0 });
-        game.active = game.active.rotated(); // left edge is now at x: 3
-        assert_eq!(game.active.left_edge(), 3);
-        game.perform(Action::MoveLeft); // x: 2
-        game.perform(Action::MoveLeft); // x: 1
-        game.perform(Action::MoveLeft); // x: 0
-        game.perform(Action::MoveLeft); // x: 0
-        assert_eq!(game.active.left_edge(), 0);
-    }
-    #[test]
-    fn test_move_right() {
-        let mut game = get_game();
-        game.active = ActiveFigure::new(FigureType::L, Point { x: 0, y: 0 });
-        game.perform(Action::MoveRight);
-        assert_eq!(game.active.position(), Point { x: 1, y: 0 });
-    }
-    #[test]
-    fn test_move_right_does_not_go_beyond_board_edge() {
-        let mut game = get_game();
-        game.active = ActiveFigure::new(FigureType::I, Point { x: 16, y: 0 });
-        game.active = game.active.rotated(); // right edge is now at 18
-        assert_eq!(game.active.left_edge(), 18);
-        game.perform(Action::MoveRight); // x: 19
-        game.perform(Action::MoveRight); // x: 19
-        assert_eq!(game.active.right_edge(), 19);
-    }
-    #[test]
-    fn test_add_active_figure_to_board() {
-        let mut game = get_game();
-        assert!(game.draw_board().is_empty());
-        game.add_active_figure_to_board();
-        assert_eq!(game.draw_board().len(), 4);
-    }
-    #[test]
-    fn test_active_figure_is_added_when_it_touches_the_floor() {
-        let mut game = get_game_with_size(4, 10);
-
-        assert_eq!(game.active.position().y, 0); // lowest figure block is at y: 1
-        assert!(game.draw_board().is_empty());
-
-        update_loops(&mut game, 3); // Should add figure to board and create new active
-
-        assert_eq!(game.active.position().y, 0);
-        assert_eq!(game.draw_board().len(), 4);
-    }
-    #[test]
-    fn test_active_figure_is_added_when_touches_block() {
-        let mut game = get_game_with_size(7, 10);
-        game.active = ActiveFigure::new(FigureType::L, Point { x: 5, y: 5 });
-        game.update(10.0); // current figure should be added to the board
-        assert_eq!(game.draw_board().len(), 4); // Next figure should colide at y: 5
-
-        update_loops(&mut game, 5); // Takes y from 1 to 5
-
-        assert_eq!(game.active.position().y, 0);
-        assert_eq!(game.draw_board().len(), 8);
-    }
-    #[test]
-    fn test_start_point_pair() {
-        let width = 10;
-        let start_point = Game::figure_start_point(width);
-        assert_eq!(start_point.x, 3);
-    }
-    #[test]
-    fn test_start_point_odd() {
-        let width = 11;
-        let start_point = Game::figure_start_point(width);
-        assert_eq!(start_point.x, 3);
-    }
-    #[test]
-    fn test_wallkick_l_left() {
-        let mut game = get_game();
-        game.active = ActiveFigure::new(FigureType::L, Point { x: 0, y: 5 });
-        game.perform(Action::Rotate);
-        game.perform(Action::MoveLeft);
-        game.perform(Action::Rotate);
-        assert_eq!(game.active.position().x, 0);
-    }
-    #[test]
-    fn test_is_game_over() {
-        let mut game = get_game_with_size(6, 10);
-        game.board = game.board.replacing_figure_at_xy(3, 1, Some(FigureType::L));
-        game.board = game.board.replacing_figure_at_xy(4, 1, Some(FigureType::L));
-        game.board = game.board.replacing_figure_at_xy(5, 1, Some(FigureType::L));
-        game.update(10.0);
-        assert!(game.is_game_over());
-    }
-    #[test]
-    fn test_is_game_over_returns_false() {
-        let mut game = get_game();
-        update_loops(&mut game, 1);
-        assert!(!game.is_game_over());
-    }
-    #[test]
-    fn test_get_score() {
-        let mut game = get_game_with_size(2, 2);
-        assert_eq!(game.get_score(), 0);
-
-        // Completing line
-        game.board.replacing_figure_at_xy(0, 1, Some(FigureType::I));
-        game.board.replacing_figure_at_xy(1, 1, Some(FigureType::I));
-        game.update(10.0);
-
-        assert_eq!(game.get_score(), 100);
-    }
-    #[test]
-    fn test_double_line_score() {
-        let mut game = get_game_with_size(2, 2);
-        assert_eq!(game.get_score(), 0);
-
-        game.active = ActiveFigure::new(FigureType::O, Point{ x: 0, y: 0});
-        game.update(10.0);
-
-        assert_eq!(game.get_score(), 200);
-    }
-
-    // HELPERS
-
-    fn draw_to_cartesian(draw: Vec<Block>) -> Vec<Point> {
-        return draw.iter().map(|block| block.position()).collect();
-    }
-    fn get_game() -> Game {
-        return get_game_with_size(40, 20);
-    }
-    fn get_game_with_size(height: usize, width: usize) -> Game {
-        let size = Size {
-            height,
-            width,
-        };
-        return Game::new(&size, get_randomizer());
-    }
-    fn get_randomizer() -> Box<dyn Randomizer> {
-        return Box::new(Random { number: 5 });
-    }
-    fn update_loops(game: &mut Game, update_times: u32) {
-        for _ in 0..update_times {
-            game.update(10.0);
-        }
     }
 }

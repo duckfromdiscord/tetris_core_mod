@@ -1,7 +1,7 @@
 mod active_figure;
 mod board;
 pub mod figure;
-mod game;
+pub mod game;
 mod move_validator;
 
 use active_figure::ActiveFigure;
