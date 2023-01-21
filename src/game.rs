@@ -80,7 +80,7 @@ impl Game {
         return board.iter().chain(&figure).cloned().collect();
     }
 
-    fn draw_active_figure(&self) -> Vec<Block> {
+    pub fn draw_active_figure(&self) -> Vec<Block> {
         let figure = self.active.to_cartesian();
         return figure
             .iter()
@@ -88,7 +88,11 @@ impl Game {
             .collect();
     }
 
-    fn draw_board(&self) -> Vec<Block> {
+    pub fn access_active_figure(&self) -> Vec<Point> {
+        return self.active.to_cartesian();
+    }
+
+    pub fn draw_board(&self) -> Vec<Block> {
         let mut blocks = vec![];
         for y in 0..self.board.height() {
             for x in 0..self.board.width() {
@@ -101,6 +105,19 @@ impl Game {
         return blocks;
     }
 
+
+    pub fn access_board(&self) -> Vec<Point> {
+        let mut points = vec![];
+        for y in 0..self.board.height() {
+            for x in 0..self.board.width() {
+                if let Some(square) = self.board.figure_at_xy(x, y) {
+                    let point = Point{x: x as i32, y: y as i32}; // it does not matter what block is there
+                    points.push(point);
+                }
+            }
+        }
+        return points;
+    }
     // GAME UPDATE
 
     pub fn update(&mut self, delta_time: f64) {
