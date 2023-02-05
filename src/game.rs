@@ -110,7 +110,7 @@ impl Game {
         let mut points = vec![];
         for y in 0..self.board.height() {
             for x in 0..self.board.width() {
-                if let Some(square) = self.board.figure_at_xy(x, y) {
+                if let Some(_square) = self.board.figure_at_xy(x, y) {
                     let point = Point{x: x as i32, y: y as i32}; // it does not matter what block is there
                     points.push(point);
                 }
