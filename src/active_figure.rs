@@ -2,7 +2,7 @@ use super::{Color, Figure, FigureType, Point};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ActiveFigure {
-    figure: Figure,
+    pub figure: Figure,
     position: Point,
     rotation_step: usize,
 }

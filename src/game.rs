@@ -92,6 +92,10 @@ impl Game {
         return self.active.to_cartesian();
     }
 
+    pub fn active_figure_color(&self) -> crate::Color {
+        self.active.figure.color()
+    }
+
     pub fn draw_board(&self) -> Vec<Block> {
         let mut blocks = vec![];
         for y in 0..self.board.height() {
